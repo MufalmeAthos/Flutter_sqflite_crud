@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:sqlitecrud/modal.dart';
 
 void main(){
   runApp(SqliteApp());
@@ -16,6 +17,9 @@ class _SqliteAppState extends State<SqliteApp> {
   int _selectedIndex = 0;
   void _onItemTapped(int index){
     // print("index: $index");
+    if(index==3){
+      Navigator.push(context, MaterialPageRoute(builder: (context){ return  const MyApp();} ));
+    }
     setState((){
       _selectedIndex = index;
     });
@@ -25,8 +29,50 @@ class _SqliteAppState extends State<SqliteApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: Text("Sqlite Crud App"),),
-        body: Center(
-          child: Text("Selected Item: $_selectedIndex"),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Center(
+              child: Text("Selected Item: $_selectedIndex"),
+            ),
+            SizedBox(height: 20,),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children:  [
+                InkWell(
+                  onTap: (){
+                    print("$context");
+                    showModalBottomSheet(
+                        context: context,
+                        builder: (context)=>Container(
+                          height: 200,
+                            child: Text("oklm"),
+                        )
+                    );
+                  },
+                  child: Card(
+
+                    child: Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Text("Modal Bottom Sheet"),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  onTap: (){
+                    print("persistent");
+                    Navigator.push(context, MaterialPageRoute(builder: (context){ return  MyApp();} ));
+                  },
+                  child: Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: Text("Persistent Bottom Sheet"),
+                    ),
+                  ),
+                )
+              ],
+            )
+          ],
         ),
         bottomNavigationBar:
         // BottomNavigationBar(
@@ -95,10 +141,19 @@ class _SqliteAppState extends State<SqliteApp> {
         //   },
         //   child: Icon(Icons.add_a_photo_outlined),
         // ),
+        // bottomSheet: BottomSheet(onClosing: (){}, builder: ,),
         drawer: Drawer(
 
         ),
       ),
     );
+
+  }
+  Widget _modalSheet(BuildContext context){
+    return Container(
+      height: 200,
+      // color: ,
+    );
+
   }
 }

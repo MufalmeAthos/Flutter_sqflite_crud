@@ -45,6 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
    TextEditingController _textController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,6 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
               InkWell(
                 onTap: (){
                   print("persistent");
+                  _persistentSheet(context);
                 },
                 child: Card(
                   child: Padding(
@@ -288,6 +290,19 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         }
  );
+  }
+  Widget? _persistentSheet(BuildContext context){
+    print(context);
+    showBottomSheet(
+        context: context,
+        builder: (context){
+          return
+            Container(
+            height: 200,
+          );
+        }
+    );
+
   }
 
   Widget? _datePicker(BuildContext context){

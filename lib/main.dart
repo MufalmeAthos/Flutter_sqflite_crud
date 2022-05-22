@@ -44,11 +44,12 @@ class _MyHomePageState extends State<MyHomePage> {
       _selectedIndex = index;
     });
   }
-   TextEditingController _textController = new TextEditingController();
-
+  TextEditingController _textController = new TextEditingController();
+  final _scafoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scafoldKey,
       appBar: AppBar(title: Text("Sqlite Crud App"),),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -240,42 +241,51 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget? _modalSheet(BuildContext context){
     showModalBottomSheet(
-      // shape: ShapeBorder(),
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(20)
+          ),
+        ),
         context: context,
         builder: (context) {
           return Container(
-            height: 200,
+            // height: 200,
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Icon(Icons.arrow_drop_down),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Enter Task"),
+                    Text("New Task"),
                     TextField(
+                      decoration: InputDecoration(
+                        label: Text("Enter a task")
+                      ),
                       controller: _textController,
 
                     ),
                     ElevatedButton(
-                        onPressed: (){
-                          print(_textController.text);
-                          _textController.clear();
-                          Timer(
-                            Duration(milliseconds: 500),
-                            () {
-                              Navigator.pop(context);
-                            },
-                          );
-                        },
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.save_alt),
-                            Text(" Save")
-                          ],
-                        ),
+                      onPressed: (){
+                        print(_textController.text);
+                        _textController.clear();
+                        Timer(
+                          Duration(milliseconds: 500),
+                              () {
+                            Navigator.pop(context);
+                          },
+                        );
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.save_alt),
+                          Text(" Save")
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -291,17 +301,42 @@ class _MyHomePageState extends State<MyHomePage> {
         }
  );
   }
+
   Widget? _persistentSheet(BuildContext context){
-    print(context);
-    showBottomSheet(
-        context: context,
-        builder: (context){
-          return
-            Container(
-            height: 200,
-          );
-        }
+    _scafoldKey.currentState!.showBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(60)
+        ),
+      ),
+      (context) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.grey[300],
+          ),
+          height: 200,
+          padding: EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                  onPressed: (){
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.close_sharp),
+              ),
+              Text(
+                'With this one, we can still use the context elements and so on '
+              ),
+              SizedBox(height: 50,),
+            ],
+          ),
+        );
+      },
     );
+
+    print(context);
 
   }
 

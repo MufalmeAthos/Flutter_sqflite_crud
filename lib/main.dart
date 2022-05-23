@@ -120,6 +120,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       return Center(
                         child: ListTile(
                           title: Text("- "+taskList.name),
+                          onLongPress: (){
+                            setState((){
+                              DatabaseHelper.instance.remove(taskList.id!);
+                            });
+                          },
                         ),
                       );
                     }).toList(),
@@ -460,6 +465,11 @@ class DatabaseHelper{
     Database db = await instance.database;
     return await db.insert('tasks', taskList.toMap());
   }
+  Future remove(int id) async{
+    Database db = await instance.database;
+    return await db.delete('tasks', where:  'id= ?',whereArgs: [id]);
+  }
+
 }
 
 

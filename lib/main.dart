@@ -40,6 +40,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   int _selectedIndex = 0;
+  int?   _selectedTaskId ;
+  String _modalTitle = "New Task";
   BuildContext? context_ ;
   void _onItemTapped(int index){
     // print("index: $index");
@@ -75,6 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
               children:  [
                 InkWell(
                   onTap: (){
+                    _textController.clear();
+                    _selectedTaskId = null;
+                    _modalTitle = "New Task";
                     _modalSheet(context);
                   },
                   child: Card(
@@ -120,6 +125,14 @@ class _MyHomePageState extends State<MyHomePage> {
                       return Center(
                         child: ListTile(
                           title: Text("- "+taskList.name),
+                          onTap: (){
+                            setState((){
+                              _textController.text = taskList.name;
+                              _selectedTaskId = taskList.id;
+                              _modalTitle = "Edit Task";
+                              _modalSheet(context);
+                            });
+                          },
                           onLongPress: (){
                             setState((){
                               DatabaseHelper.instance.remove(taskList.id!);
@@ -298,6 +311,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         context: context,
         builder: (context) {
+          print(_selectedTaskId);
           return Container(
             // height: 200,
             padding: EdgeInsets.symmetric(horizontal: 20),
@@ -309,7 +323,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("New Task"),
+                    Text(_modalTitle),
                     TextField(
                       decoration: InputDecoration(
                         label: Text("Enter a task"),
@@ -320,7 +334,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     ElevatedButton(
                       onPressed: () async{
-                        await DatabaseHelper.instance.add(
+                        (_selectedTaskId != null )
+                        ? await DatabaseHelper.instance.update(
+                           TaskList(id: _selectedTaskId, name: _textController.text),
+                        )
+                        : await DatabaseHelper.instance.add(
                           TaskList(name: _textController.text),
                         );
                         print(_textController.text);
@@ -328,6 +346,8 @@ class _MyHomePageState extends State<MyHomePage> {
                         Timer(
                           Duration(milliseconds: 500),
                           () {
+                            _textController.clear();
+                            _selectedTaskId = null;
                             Navigator.push(context, MaterialPageRoute(
                                 builder: (context){ return MyHomePage();}
                             ));
@@ -346,6 +366,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 IconButton(
                     onPressed: (){
+                      _textController.clear();
+                      _selectedTaskId = null;
                       Navigator.of(context).pop();
                     },
                     icon: Icon(Icons.close_sharp)
@@ -461,13 +483,18 @@ class DatabaseHelper{
     return taskList;
 
   }
-  Future add(TaskList taskList) async{
+  Future<int> add(TaskList taskList) async{
     Database db = await instance.database;
     return await db.insert('tasks', taskList.toMap());
   }
-  Future remove(int id) async{
+  Future<int> remove(int id) async{
     Database db = await instance.database;
     return await db.delete('tasks', where:  'id= ?',whereArgs: [id]);
+  }
+  Future<int> update(TaskList taskList) async{
+    Database db = await instance.database;
+    return await db.update('tasks', taskList.toMap(),where: 'id = ?',whereArgs: [taskList.id]);
+
   }
 
 }

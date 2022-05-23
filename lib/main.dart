@@ -123,21 +123,34 @@ class _MyHomePageState extends State<MyHomePage> {
                     :Column(
                     children: snapshot.data!.map((taskList) {
                       return Center(
-                        child: ListTile(
-                          title: Text("- "+taskList.name),
-                          onTap: (){
-                            setState((){
-                              _textController.text = taskList.name;
-                              _selectedTaskId = taskList.id;
-                              _modalTitle = "Edit Task";
-                              _modalSheet(context);
-                            });
-                          },
-                          onLongPress: (){
-                            setState((){
-                              DatabaseHelper.instance.remove(taskList.id!);
-                            });
-                          },
+                        child: Card(
+                          color: _selectedTaskId != taskList.id || _selectedTaskId == null
+                          ? Colors.white
+                          : Colors.white70,
+                          child: ListTile(
+                            title: Text("- "+taskList.name),
+                            onTap: (){
+                              print(_selectedTaskId);
+                              setState((){
+                                if(_selectedTaskId == null){
+                                  _textController.text = taskList.name;
+                                  _selectedTaskId = taskList.id;
+                                  _modalTitle = "Edit Task";
+                                  _modalSheet(context);
+                                }else{
+                                  _textController.text = '';
+                                  _selectedTaskId = null;
+                                  _modalTitle = "New Task";
+
+                                }
+                              });
+                            },
+                            onLongPress: (){
+                              setState((){
+                                DatabaseHelper.instance.remove(taskList.id!);
+                              });
+                            },
+                          ),
                         ),
                       );
                     }).toList(),
@@ -311,7 +324,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         context: context,
         builder: (context) {
-          print(_selectedTaskId);
+          // print(_selectedTaskId);
           return Container(
             // height: 200,
             padding: EdgeInsets.symmetric(horizontal: 20),

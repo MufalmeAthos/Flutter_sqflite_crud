@@ -9,6 +9,10 @@ import 'package:path/path.dart';
 
 import 'package:sqlitecrud/modal.dart';
 
+
+
+
+
 void main(){
   WidgetsFlutterBinding.ensureInitialized();
   runApp(SqliteApp());
